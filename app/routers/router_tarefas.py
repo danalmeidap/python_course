@@ -1,43 +1,40 @@
 from fastapi import APIRouter, HTTPException
+from app.models.tarefa import TarefaModel
 from app.schemas.tarefas import Tarefa
 from fastapi import status
+from app.deps import TaskRepo
 
 tarefas_router = APIRouter()
-banco_de_dados = []
 
 
 @tarefas_router.post("/", response_model=Tarefa, status_code=status.HTTP_201_CREATED)
-def criar_tarefa(tarefa: Tarefa):
-    banco_de_dados.append(tarefa)
-    return tarefa
+def criar_tarefa(tarefa: Tarefa, repository: TaskRepo):
+    if repository.get_by_id(tarefa.id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Tarefa com este ID já existe.")
+    nova_tarefa = TarefaModel(**tarefa.model_dump())  # ← converte Pydantic → SQLAlchemy
+    return repository.create(nova_tarefa)
 
 
 @tarefas_router.get("/", response_model=list[Tarefa])
-def listar_tarefas():
-    return banco_de_dados
+def listar_tarefas(repository: TaskRepo):
+    return repository.get_all()
 
 @tarefas_router.get("/{tarefa_id}", response_model=Tarefa)
-def obter_tarefa(tarefa_id: int):
-    _, tarefa = _buscar_tarefa(tarefa_id)
+def obter_tarefa(tarefa_id: int, repository: TaskRepo):
+    tarefa = repository.get_by_id(tarefa_id)
+    if tarefa is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tarefa não encontrada")
     return tarefa
 
 @tarefas_router.put("/{tarefa_id}", response_model=Tarefa)
-def atualizar_tarefa(tarefa_id: int, tarefa_atualizada: Tarefa):
-    index, _ = _buscar_tarefa(tarefa_id)
-    banco_de_dados[index] = tarefa_atualizada
-    return tarefa_atualizada
+def atualizar_tarefa(tarefa_id: int, tarefa_atualizada: Tarefa, repository: TaskRepo):
+    tarefa = repository.update(tarefa_id, tarefa_atualizada.model_dump())
+    if tarefa is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tarefa não encontrada")
+    return tarefa
 
 @tarefas_router.delete("/{tarefa_id}", status_code=status.HTTP_204_NO_CONTENT)
-def deletar_tarefa(tarefa_id: int):
-    index, _ = _buscar_tarefa(tarefa_id)
-    del banco_de_dados[index]
-
-
-def _buscar_tarefa(tarefa_id: int) -> tuple[int, Tarefa]:
-    for index, tarefa in enumerate(banco_de_dados):
-        if tarefa.id == tarefa_id:
-            return index, tarefa
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Tarefa não encontrada"
-    )
+def deletar_tarefa(tarefa_id: int, repository: TaskRepo):
+    tarefa = repository.delete(tarefa_id)
+    if tarefa is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tarefa não encontrada")

@@ -1,7 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 class Tarefa(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int = Field(gt=0, description="O ID da tarefa deve ser um número inteiro positivo.")
     titulo: str= Field(min_length=3, max_length=100, description="Título da  tarefa")
     descricao: Optional[str] = Field(default=None, max_length=500)
