@@ -89,3 +89,12 @@ def test_criar_tarefa_titulo_so_espacos(client):
     tarefa = {"id": 1, "titulo": "     "}
     response = client.post("/tarefas", json=tarefa)
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+
+
+def test_persistencia_apos_restart_sessao(client):
+    tarefa = {"id": 100, "titulo": "Tarefa persistente"}
+    client.post("/tarefas/", json=tarefa)
+    
+    response = client.get("/tarefas/100")
+    assert response.status_code == 200
+    assert response.json()["titulo"] == "Tarefa persistente"
