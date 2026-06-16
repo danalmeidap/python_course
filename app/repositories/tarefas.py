@@ -1,5 +1,4 @@
 from sqlalchemy.orm import Session
-from app.models import tarefa
 from app.models.tarefa import TarefaModel
 
 
