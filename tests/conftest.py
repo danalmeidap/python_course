@@ -34,3 +34,16 @@ def client():
 
     Base.metadata.drop_all(bind=engine)
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def usuario_autenticado(client):
+    usuario = {"email": "teste@teste.com", "senha": "senha123"}
+    client.post("/usuarios/", json=usuario)
+    
+    response = client.post(
+        "/usuarios/login",
+        data={"username": usuario["email"], "password": usuario["senha"]}
+    )
+    token = response.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"} 
