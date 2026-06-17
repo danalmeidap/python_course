@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, ConfigDict, Field
+from app.schemas.tarefas import TarefaResponse
 
 
 class UsuarioBase(BaseModel):
@@ -12,3 +13,9 @@ class UsuarioCreate(UsuarioBase):
 class UsuarioResponse(UsuarioBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+
+
+class UsuarioListTarefas(UsuarioBase):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    tarefas: list[TarefaResponse]

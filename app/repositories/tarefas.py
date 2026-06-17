@@ -11,6 +11,9 @@ class TarefasRepository:
 
     def get_by_id(self, tarefa_id: int):
         return self.db.query(TarefaModel).filter(TarefaModel.id == tarefa_id).first()
+    
+    def get_all_by_usuario(self, usuario_id: int):
+        return self.db.query(TarefaModel).filter(TarefaModel.usuario_id == usuario_id).all()
 
     def create(self, tarefa: TarefaModel):
         self.db.add(tarefa)

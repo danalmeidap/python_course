@@ -7,6 +7,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends
 from app.security.hashing import verificar_senha
 from app.security.jwt import criar_access_token
+from app.schemas.usuario import UsuarioListTarefas
+from app.deps import UsuarioAtual
 
 usuarios_router = APIRouter()
 
@@ -29,3 +31,8 @@ def login(repository: UserRepo, form_data: OAuth2PasswordRequestForm = Depends()
         )
     access_token = criar_access_token(dados={"sub": usuario.email})
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@usuarios_router.get("/me/tarefas", response_model= UsuarioListTarefas)
+def obter_minhas_tarefas(usuario_atual: UsuarioAtual):
+    return usuario_atual
