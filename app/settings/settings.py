@@ -11,8 +11,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = Field(init=False)
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    POSTGRES_USER: str = Field(init=False)
-    POSTGRES_PASSWORD: str = Field(init=False)
-    POSTGRES_DB: str = Field(init=False)
-
+    POSTGRES_USER: str = Field(default="postgres")
+    POSTGRES_PASSWORD: str = Field(default="")
+    POSTGRES_DB: str = Field(default="")
 settings = Settings()
