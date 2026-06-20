@@ -5,6 +5,9 @@ from app.settings.settings import Settings
 settings = Settings()
 DATABASE_URL = settings.DATABASE_URL
 
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
