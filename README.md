@@ -35,3 +35,24 @@ pytest -v
 - Ciclo TDD completo: Red → Green → Refactor
 - Type hints e docstrings profissionais
 - Tratamento de exceções em funções de negócio
+
+
+## Deploy
+
+API disponível em produção:
+
+- **Base URL:** https://insightful-ambition-production-00b7.up.railway.app
+- **Documentação interativa:** https://insightful-ambition-production-00b7.up.railway.app/docs
+
+## Endpoints principais
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| POST | /usuarios/ | Cadastro de usuário |
+| POST | /usuarios/login | Login (retorna JWT) |
+| GET | /tarefas/ | Listar tarefas do usuário |
+| POST | /tarefas/ | Criar tarefa |
+| GET | /tarefas/{id} | Obter tarefa |
+| PUT | /tarefas/{id} | Atualizar tarefa |
+| DELETE | /tarefas/{id} | Deletar tarefa |
+| GET | /usuarios/me/tarefas | Listar minhas tarefas |
